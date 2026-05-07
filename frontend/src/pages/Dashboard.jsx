@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
+
 import {
     getChannelStats,
-    getChannelVideo,
+    getChannelVideos,
 } from "../api/dashboardApi";
 
 function Dashboard() {
@@ -51,5 +53,7 @@ function Dashboard() {
                 </div>
             )}
         </div>
-    )
+    );
 }
+
+export default Dashboard;
