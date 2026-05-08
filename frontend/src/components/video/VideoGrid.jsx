@@ -13,7 +13,7 @@ function VideoGrid() {
         try {
             const data = await getAllVideos();
             console.log(data);
-            setVideos(data);
+            setVideos(Array.isArray(data) ? data : data.videos || data.data || []);
 
         } catch (error) {
 

@@ -1,4 +1,6 @@
 import { Search } from "lucide-react";
+import playlogo from "../../assets/PLAYLOGO.jpEg"
+
 
 function Navbar() {
 
@@ -6,17 +8,22 @@ function Navbar() {
         <div className="flex items-center justify-between border-b border-grey-700 px-8 py-4 bg-black text-white">
             
             <div className="text-3xl font-bold text-purple-500 cursor-pointer">
-                PLAY
+                
+                <img
+                    src={playlogo}
+                    className="h-10 w-auto"
+                />
+
             </div>
             
-            <div className="Flex items-center border border-grey-600 w-[450px] h-[500px] px-4 gap-3">
+            <div className="flex items-center border border-grey-600 text-xl w-[460px] h-[50px] px-4 gap-3">
 
-                <Search size={20}/>
+                <Search size={25}/>
 
                 <input
                     type="text"
                     placeholder="Search"
-                    className="bg-transparent outline-none w-full"
+                    className="bg-transparent outline-none w-full px-2 gap-3"
                 />
 
             </div>
