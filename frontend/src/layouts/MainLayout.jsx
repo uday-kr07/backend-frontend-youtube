@@ -4,19 +4,19 @@ import Sidebar from "../components/layout/Sidebar";
 function MainLayout({ children }) {
 
     return (
-        <div className="bg-black min-h-screen text-white">
+        <div className="bg-black min-h-screen w-full text-white">
 
-        <Navbar />
+            <Navbar />
 
-            <div className="flex">
+                <div className="flex">
 
-        <Sidebar />
+            <Sidebar />
 
-        <div className="flex-1">
-        {children}
-        </div>
+                <main className="flex-1 bg-black text-white">
+                    {children}
+                </main>
 
-        </div>
+            </div>
 
     </div>
     );

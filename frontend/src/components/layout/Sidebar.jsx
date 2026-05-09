@@ -46,7 +46,7 @@ function Sidebar () {
 
                     <div
                         key={index}
-                        className="flex items-center gap-4 border border-grey-700 px-4 py-4 cursor-pointer hover:bg-gray-900"
+                        className="flex items-center gap-4 px-4 py-4 cursor-pointer hover:bg-gray-500 rounded-lg transition-colors "
                     >
                         {item.icon}
 
