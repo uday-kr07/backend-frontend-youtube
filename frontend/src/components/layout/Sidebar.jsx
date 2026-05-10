@@ -5,10 +5,12 @@ import {
     Video,
     Folder,
     Users,
+    Info,
+    Settings
 } from "lucide-react";
 
 
-const menuItems = [ 
+const topmenuItems = [ 
     {
         title: "Home",
         icon: <Home size={20} />
@@ -35,27 +37,61 @@ const menuItems = [
     },
 ];
 
+const bottomMenuItems = [
+    {
+        title: "Support",
+        icon: <Info size={20} />
+    },
+    {
+        title: "Settings",
+        icon: <Settings size={20} />
+    }
+];
+
 function Sidebar () {
 
     return (
-        <div className="w-[260px]" border-r border-gray-700 h-screen p-5 bg-black text-white>
+        <div className="w-[260px] h-screen border-r border-gray-700 bg-black text-white p-5 flex flex-col justify-between">
 
+            {/* TOP MENU */}
             <div className="flex flex-col gap-4 mt-5">
 
-                {menuItems.map((item, index) => (
+                {topmenuItems.map((item, index) => (
 
                     <div
                         key={index}
-                        className="flex items-center gap-4 px-4 py-4 cursor-pointer hover:bg-gray-500 rounded-lg transition-colors "
+                        className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-gray-500 rounded-lg transition-colors "
                     >
                         {item.icon}
 
-                        <span>{item.title}</span>
+                        <span className="text-[16px] font-medium">
+                            {item.title}
+                        </span>
                     </div>
                 ))}
 
             </div>
+
+            {/* BOTTOM MENU*/}
+            <div className="flex flex-col gap-4 mb-5">
+
+                {bottomMenuItems.map((item, index) => (
+
+                    <div
+                        key={index}
+                        className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-gray-500 rounded-lg transition-colors "
+                    >
+                        {item.icon}
+
+                        <span className="text-[16px] font-medium">
+                            {item.title}
+                        </span>
+                    </div>
+
+                ))}
+
+            </div>
         </div>
-    )
+    );
 }
 export default Sidebar;
