@@ -449,11 +449,12 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 const searchVideos = async (req, res) => {
     
     const { query } = req.query;
+
     const videos =await Video.find({
 
         title: {
             $regex: query,
-            $option: "1"
+            $options: "i"
         }
     }).populate("owner", "username avatar");
 
@@ -469,5 +470,6 @@ export {
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    searchVideos
 }

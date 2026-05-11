@@ -1,39 +1,52 @@
 import { useEffect, useState } from "react";
+
 import VideoCard from "./VideoCard";
+
 import { getAllVideos } from "../../api/videoApi";
+
 import EmptyState from "../common/EmptyState";
+
 
 function VideoGrid() {
 
     const [videos, setVideos] = useState([]);
+
     const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
 
-    const fetchVideos = async () => {
+        const fetchVideos = async () => {
 
-        try {
-            const data = await getAllVideos();
+            try {
 
-            console.log(data);
+                const data = await getAllVideos();
+
+                console.log(data);
+
                 setVideos(
-                    Array.isArray(data) 
-                        ? data 
-                        : data.videos || data.data || []);
+                    Array.isArray(data)
+                        ? data
+                        : data.videos || data.data?.docs || []
+                );
 
-        } catch (error) {
+            } catch (error) {
 
-            console.log(error);
+                console.log(error);
 
-        }
-    };
+            } finally {
 
-    fetchVideos();
+                setLoading(false);
 
-}, []);
+            }
+        };
 
- // LOADING STATE
+        fetchVideos();
+
+    }, []);
+
+
+    // LOADING STATE
 
     if (loading) {
 
@@ -60,25 +73,27 @@ function VideoGrid() {
     // VIDEO GRID
 
     return (
-    <div className="grid grid-cols-4 gap-8 p-6 bg-black">
 
-        {videos?.map((video) => (
+        <div className="grid grid-cols-4 gap-8 p-6 bg-black">
 
-        <VideoCard
-            key={video._id}
-            video={{
-                title: video.title,
-                thumbnail: video.thumbnail,
-                avatar: video.owner?.avatar,
-                channel: video.owner?.username,
-                views: video.views,
-                time: "18 hours ago",
-            }}
-        />
+            {videos.map((video) => (
 
-        ))}
+                <VideoCard
+                    key={video._id}
+                    video={{
+                        title: video.title,
+                        thumbnail: video.thumbnail?.url,
+                        avatar: video.ownerDetails?.avatar?.url,
+                        channel: video.ownerDetails?.username,
+                        views: video.views,
+                        time: "18 hours ago",
+                    }}
+                />
 
-    </div>
+            ))}
+
+        </div>
+
     );
 }
 

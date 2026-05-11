@@ -1,12 +1,21 @@
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 
-function MainLayout({ children }) {
+function MainLayout({ 
+    children, 
+    searchQuery, 
+    setSearchQuery, 
+    onSearch 
+}) {
 
     return (
         <div className="bg-black min-h-screen w-full text-white">
 
-            <Navbar />
+            <Navbar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                onSearch={onSearch}
+            />
 
                 <div className="flex">
 
