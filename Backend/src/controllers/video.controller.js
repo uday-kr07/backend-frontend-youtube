@@ -446,6 +446,23 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
         );
 })
 
+const searchVideos = async (req, res) => {
+    
+    const { query } = req.query;
+    const videos =await Video.find({
+
+        title: {
+            $regex: query,
+            $option: "1"
+        }
+    }).populate("owner", "username avatar");
+
+    res.json({
+        success: true,
+        data: videos
+    });
+};
+
 export {
     getAllVideos,
     publishAVideo,
