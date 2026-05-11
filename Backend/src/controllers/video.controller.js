@@ -13,7 +13,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     //TODO: get all videos based on query, sort, pagination
 
 
-     const pipeline = [];
+    const pipeline = [];
 
     // for using Full Text based search u need to create a search index in mongoDB atlas
     // you can include field mapppings in search index eg.title, description, as well
@@ -289,7 +289,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     const { title, description } = req.body;
     //TODO: update video details like title, description, thumbnail
- 
+
 
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid videoId");

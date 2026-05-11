@@ -7,7 +7,7 @@ function Home() {
     return (
         <MainLayout>
 
-        <VideoGrid />
+            <VideoGrid />
 
         </MainLayout>
     );

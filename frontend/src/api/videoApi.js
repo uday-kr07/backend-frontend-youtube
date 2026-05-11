@@ -22,3 +22,12 @@ export const uploadVideoBy = async (formData) => {
     );
     return response.data;
 };
+
+export const searchVideos = async (query) => {
+
+    const response = await api.get(
+        `/videos/search?query=${query}`
+    );
+
+    return response.data;
+}

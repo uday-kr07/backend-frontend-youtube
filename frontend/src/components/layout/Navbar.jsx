@@ -30,13 +30,32 @@ function Navbar() {
 
             <div className="flex items-center gap-5">
 
-        <button className="text-white font-semibold">
-            Log in
-        </button>
+        <button className="
+            text-white 
+            font-semibold 
+            transition-all 
+            duration-300 
+            hover:text-purple-400 
+            hover:scale-108
+    ">
+        Log in
+    </button>
 
-        <button className="bg-purple-500 px-5 py-3 text-black font-semibold rounded-md">
-            Sign up
-        </button>
+        <button className="
+            bg-purple-500 
+            px-5 
+            py-3 
+            text-black 
+            font-semibold 
+            rounded-md 
+            transition-all 
+            duration-300 
+            hover:bg-purple-400 
+            hover:scale-105 
+            hover:shadow-lg
+        ">
+        Sign up
+    </button>
 
         </div>
 
