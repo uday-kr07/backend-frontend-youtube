@@ -61,14 +61,12 @@ function VideoGrid() {
         );
     }
 
-
     // EMPTY STATE
 
     if (videos.length === 0) {
 
         return <EmptyState />;
     }
-
 
     // VIDEO GRID
 

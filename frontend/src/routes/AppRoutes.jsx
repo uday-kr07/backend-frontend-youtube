@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import Login from "../pages/Login";
 import Home from "../pages/Home";
+import Login from "../pages/Login";
+import Dashboard from "../pages/Dashboard";
+import VideoDetails from "../pages/VideoDetails";
 
 
 function AppRoutes() {
@@ -24,6 +25,12 @@ function AppRoutes() {
                     path="dashboard"
                     element={<Dashboard />}
                 />
+
+                <Route
+                    path="/watch/:videoId"
+                    element={<VideoDetails />}
+                />
+
             </Routes>
 
         </BrowserRouter>
