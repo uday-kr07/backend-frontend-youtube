@@ -1,20 +1,28 @@
 import api from "../services/axios";
 
-export const loginUser = async (userData) => {
+
+export const loginUser = async (formData) => {
+
     const response = await api.post(
         "/users/login",
-        userData
+        formData
     );
 
     return response.data;
 };
 
-export const registerUser = async (userData) => {
+
+export const registerUser = async (formData) => {
 
     const response = await api.post(
-        "users/register",
-        userData
+        "/users/register",
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }
     );
 
     return response.data;
-}
+};

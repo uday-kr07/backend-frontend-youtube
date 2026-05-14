@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import VideoDetails from "../pages/VideoDetails";
+
 
 
 function AppRoutes() {
@@ -22,6 +24,11 @@ function AppRoutes() {
                 />
 
                 <Route
+                    path="/register"
+                    element={<Register />}
+                />
+
+                <Route
                     path="dashboard"
                     element={<Dashboard />}
                 />
@@ -30,6 +37,8 @@ function AppRoutes() {
                     path="/watch/:videoId"
                     element={<VideoDetails />}
                 />
+
+                
 
             </Routes>
 
