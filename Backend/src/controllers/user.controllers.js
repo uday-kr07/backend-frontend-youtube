@@ -77,8 +77,13 @@ const registerUser = asyncHandler( async (req, res) => {
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+        let coverImage = null
+            if (coverImageLocalPath) {
+                coverImage = await uploadOnCloudinary(
+        coverImageLocalPath
+    )
 
+}
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required")
     }
@@ -217,7 +222,7 @@ const refreshAccessToken = asyncHandler(async (req, res) =>
             process.env.REFRESH_TOKEN_SECRET
         )
     
-        const user = await User.findById(decodedToken?.id)
+        const user = await User.findById(decodedToken?._id)
     
         if (!user) {
             throw new ApiError(401, "Invalid refresh token")
@@ -228,18 +233,23 @@ const refreshAccessToken = asyncHandler(async (req, res) =>
         }
     
         const options = {
-            hhtpOnly: true,
+            httpOnly: true,
             secure: true
         }
     
-        const {accessToken, newrefreshToken}  = await generateAccessAndRefreshTokens(user._id)
+        const {
+            accessToken,
+            refreshToken: newRefreshToken
+                } = await generateAccessAndRefreshTokens(
+            user._id
+        )
          //look at that some error
 
 
         return res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newrefreshToken, options)
+        .cookie("refreshToken", newRefreshToken, options)
         .json(
             new ApiResponse(
                 200,
@@ -291,7 +301,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         req.user?._id,
         {
             $set: {
-                fullname,
+                fullName,
                 email: email
             }
         },
@@ -316,7 +326,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while uploading avatar")
     }
 
-    const user =await user.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
 
         {
@@ -334,9 +344,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-    const CoverImageLocalPath = req.file?.path
+    const coverImageLocalPath = req.file?.path
 
-    if (!CoverImageLocalPath) {
+    if (!coverImageLocalPath) {
         throw new ApiError(400, "CoverImage file is required")
     }
 
@@ -346,7 +356,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while uploading coverImage")
     }
 
-    const user = await user.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
 
         {

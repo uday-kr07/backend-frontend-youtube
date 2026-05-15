@@ -6,8 +6,16 @@ dotenv.config();
 
 const app = express()
 
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",").map((origin) => origin.trim()) || []
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        }
+
+        return callback(new Error("Not allowed by CORS"))
+    },
     credentials: true
 }))
 
@@ -40,5 +48,15 @@ app.use("/api/v1/playlist", playlistRouter)
 app.use("/api/v1/dashboard", dashboardRouter)
 
 // http://localhost:5000/api/v1/users/register
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500
+
+    return res.status(statusCode).json({
+        success: false,
+        message: err.message || "Internal server error",
+        errors: err.errors || []
+    })
+})
 
 export { app }
