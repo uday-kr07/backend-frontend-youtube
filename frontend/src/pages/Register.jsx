@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import playlogo from "../assets/PLAYLOGO.jpEg";
 import { registerUser } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 
 
 function Register() {
 
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [formData, setFormData] = useState({
 
@@ -79,7 +81,9 @@ function Register() {
 
             console.log(data);
 
-            navigate("/login");
+            login(data.data);
+
+            navigate("/profile");
 
         } catch (error) {
 

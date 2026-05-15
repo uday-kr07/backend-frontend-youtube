@@ -4,6 +4,8 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import VideoDetails from "../pages/VideoDetails";
+import Profile from "../pages/Profile";
+import ProtectedRoute from "./ProtectedRoute";
 
 
 
@@ -30,7 +32,20 @@ function AppRoutes() {
 
                 <Route
                     path="dashboard"
-                    element={<Dashboard />}
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route

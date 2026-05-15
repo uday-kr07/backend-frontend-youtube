@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import playlogo from "../assets/PLAYLOGO.jpEg";
 import { loginUser } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 
 
 function Login() {
 
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
 
         email: "",
@@ -41,8 +43,9 @@ function Login() {
             const data = await loginUser(formData);
             console.log(data);
 
+            login(data.data.user, data.data.accessToken);
 
-            navigate("/");
+            navigate("/profile");
         } catch (error) {
             console.log(error);
             setError(
