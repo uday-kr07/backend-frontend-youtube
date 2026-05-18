@@ -9,36 +9,24 @@ function Register() {
 
     const navigate = useNavigate();
     const { login } = useAuth();
-
     const [formData, setFormData] = useState({
 
         username: "",
-
         fullName: "",
-
         email: "",
-
         password: "",
-
         avatar: null,
-
         coverImage: null
-
     });
 
     const [loading, setLoading] = useState(false);
-
     const [error, setError] = useState("");
-
-
     const handleChange = (e) => {
 
         const { name, value, files } = e.target;
 
         setFormData({
-
             ...formData,
-
             [name]: files ? files[0] : value
 
         });
@@ -46,26 +34,19 @@ function Register() {
 
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
-
         try {
 
             setLoading(true);
-
             setError("");
 
 
             const submitData = new FormData();
 
             submitData.append("username", formData.username);
-
             submitData.append("fullName", formData.fullName);
-
             submitData.append("email", formData.email);
-
             submitData.append("password", formData.password);
-
             submitData.append("avatar", formData.avatar);
 
             if (formData.coverImage) {
@@ -78,8 +59,7 @@ function Register() {
 
 
             const data = await registerUser(submitData);
-
-            console.log(data);
+                console.log(data);
 
             login(data.data);
 
@@ -105,7 +85,6 @@ function Register() {
     return (
 
         <div className="min-h-screen bg-black flex items-center justify-center text-white px-4">
-
             <div className="w-full max-w-md border border-gray-800 rounded-2xl p-8 bg-[#0f0f0f]">
 
                 {/* LOGO */}
@@ -116,33 +95,25 @@ function Register() {
                         src={playlogo}
                         className="h-12"
                     />
-
                 </div>
 
 
                 {/* TITLE */}
 
                 <h1 className="text-3xl font-bold text-center">
-
                     Create Account
-
                 </h1>
 
                 <p className="text-gray-400 text-center mt-2">
-
                     Join Play today
-
                 </p>
-
 
                 {/* ERROR */}
 
                 {error && (
 
                     <div className="mt-5 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
-
                         {error}
-
                     </div>
 
                 )}
@@ -154,7 +125,6 @@ function Register() {
                     onSubmit={handleSubmit}
                     className="mt-8 flex flex-col gap-5"
                 >
-
                     {/* USERNAME */}
 
                     <input
@@ -210,11 +180,8 @@ function Register() {
                     {/* AVATAR */}
 
                     <div>
-
                         <label className="text-sm text-gray-400">
-
                             Avatar
-
                         </label>
 
                         <input
@@ -234,9 +201,7 @@ function Register() {
                     <div>
 
                         <label className="text-sm text-gray-400">
-
                             Cover Image
-
                         </label>
 
                         <input

@@ -48,7 +48,7 @@ function Profile() {
                             )}
 
                             <div className="pb-2">
-                                <h1 className="m-0 text-3xl font-bold text-white">
+                                <h1 className="m-1 text-3xl font-bold text-white">
                                     {displayName}
                                 </h1>
                                 <p className="mt-1 text-gray-400">

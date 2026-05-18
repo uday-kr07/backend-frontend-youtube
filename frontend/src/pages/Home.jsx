@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-
 import MainLayout from "../layouts/MainLayout";
-
 import VideoGrid from "../components/video/VideoGrid";
-
 import {
     searchVideos,
     getAllVideos
@@ -13,16 +10,12 @@ import {
 function Home() {
 
     const [searchQuery, setSearchQuery] = useState("");
-
     const [videos, setVideos] = useState([]);
-
     const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
-
         const fetchVideos = async () => {
-
             try {
 
                 const data = await getAllVideos();
@@ -34,9 +27,7 @@ function Home() {
                 );
 
             } catch (error) {
-
                 console.log(error);
-
             } finally {
 
                 setLoading(false);
@@ -52,17 +43,12 @@ function Home() {
     const handleSearch = async () => {
 
         try {
-
             setLoading(true);
-
             const data = await searchVideos(searchQuery);
-
             setVideos(data.data);
 
         } catch (error) {
-
             console.log(error);
-
         } finally {
 
             setLoading(false);
