@@ -7,7 +7,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const createTweet = asyncHandler(async (req, res) => {
     //TODO: create tweet
-    const content = req.body;
+    const { content } = req.body;
 
     if (!content) {
         throw new ApiError(400, "Content is required");
@@ -83,7 +83,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
     const tweet = await Tweet.findById(tweetId);
 
-    if(tweet) {
+    if(!tweet) {
         throw new ApiError(400, "Tweet not found");
     }
 
@@ -123,7 +123,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
                     {
                         $project: {
                             username: 1,
-                            "avatar.url": 1,
+                            avatar: 1,
                         },
                     },
                 ],

@@ -1,7 +1,7 @@
 import api from "../services/axios";
 
-export const getAllVideos = async () => {
-    const response = await api.get("/videos");
+export const getAllVideos = async (params = {}) => {
+    const response = await api.get("/videos", { params });
     return response.data;
 };
 
@@ -15,7 +15,7 @@ export const uploadVideoBy = async (formData) => {
         "/videos",
         formData,
         {
-            header: {
+            headers: {
                 "Content-Type": "multipart/form-data",
             },
         }
@@ -26,8 +26,14 @@ export const uploadVideoBy = async (formData) => {
 export const searchVideos = async (query) => {
 
     const response = await api.get(
-        `/videos/search?query=${query}`
+        "/videos/search",
+        { params: { query } }
     );
 
     return response.data;
 }
+
+export const toggleVideoPublish = async (videoId) => {
+    const response = await api.patch(`/videos/toggle/publish/${videoId}`);
+    return response.data;
+};

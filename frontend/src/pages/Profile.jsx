@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../context/AuthContext";
 
+
 function Profile() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();

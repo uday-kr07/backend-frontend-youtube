@@ -1,10 +1,10 @@
 import { Search, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import playlogo from "../../assets/PLAYLOGO.jpEg"
+import playlogo from "../../assets/PLAYLOGO.jpeg"
 import { useAuth } from "../../context/AuthContext";
 
 
-function Navbar({ searchQuery, setSearchQuery, onSearch }) { //frontend
+function Navbar({ searchQuery = "", setSearchQuery = () => {}, onSearch = () => {} }) { //frontend
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -12,7 +12,7 @@ function Navbar({ searchQuery, setSearchQuery, onSearch }) { //frontend
     const avatarUrl = typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url;
 
     return (
-        <div className="flex flex-wrap items-center justify-between border-b border-grey-700 px-8 py-4 bg-black text-white">
+        <div className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-4 border-b border-gray-800 bg-black px-4 py-4 text-white md:px-8">
             
             {/* LOGO */}
 
@@ -28,7 +28,7 @@ function Navbar({ searchQuery, setSearchQuery, onSearch }) { //frontend
             {/* SEARCH BAR */}
             </div>
             
-            <div className="flex items-center border border-grey-600 text-xl w-full md:w-[460px] h-[50px] px-4 gap-3 md:order-none">
+            <div className="flex h-[46px] w-full items-center gap-3 rounded-md border border-gray-700 px-4 text-xl md:w-[460px] md:order-none">
 
                 <Search
                     size={20}

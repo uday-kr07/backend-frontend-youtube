@@ -1,97 +1,30 @@
-import { useEffect, useState } from "react";
-
+import EmptyState from "../common/EmptyState";
 import VideoCard from "./VideoCard";
 
-import { getAllVideos } from "../../api/videoApi";
-
-import EmptyState from "../common/EmptyState";
-
-
-function VideoGrid() {
-
-    const [videos, setVideos] = useState([]);
-
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-
-        const fetchVideos = async () => {
-
-            try {
-
-                const data = await getAllVideos();
-
-                console.log(data);
-
-                setVideos(
-                    Array.isArray(data)
-                        ? data
-                        : data.videos || data.data?.docs || []
-                );
-
-            } catch (error) {
-
-                console.log(error);
-
-            } finally {
-
-                setLoading(false);
-
-            }
-        };
-
-        fetchVideos();
-
-    }, []);
-
-
-    // LOADING STATE
+function VideoGrid({ videos = [], loading = false }) {
+    const items = Array.isArray(videos) ? videos : [];
 
     if (loading) {
-
         return (
-
-            <div className="flex items-center justify-center h-[80vh] text-white">
-
+            <div className="flex h-[80vh] items-center justify-center text-white">
                 Loading...
-
             </div>
-
         );
     }
 
-    // EMPTY STATE
-
-    if (videos.length === 0) {
-
+    if (items.length === 0) {
         return <EmptyState />;
     }
 
-    // VIDEO GRID
-
     return (
-
-        <div className="grid grid-cols-4 gap-8 p-6 bg-black">
-
-            {videos.map((video) => (
-
+        <div className="grid gap-6 bg-black p-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {items.map((video) => (
                 <VideoCard
                     key={video._id}
-                    video={{
-                        title: video.title,
-                        thumbnail: video.thumbnail?.url,
-                        avatar: video.ownerDetails?.avatar?.url,
-                        channel: video.ownerDetails?.username,
-                        views: video.views,
-                        time: "18 hours ago",
-                    }}
+                    video={video}
                 />
-
             ))}
-
         </div>
-
     );
 }
 

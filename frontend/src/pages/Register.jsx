@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import playlogo from "../assets/PLAYLOGO.jpEg";
+import playlogo from "../assets/PLAYLOGO.jpeg";
 import { registerUser } from "../api/authApi";
 import { useAuth } from "../context/AuthContext";
 

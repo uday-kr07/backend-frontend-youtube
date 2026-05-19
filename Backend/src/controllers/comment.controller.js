@@ -71,7 +71,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 owner: {
                     username: 1,
                     fullName: 1,
-                    "avatar.url": 1
+                    avatar: 1
                 },
                 isLiked: 1
             }
@@ -184,10 +184,12 @@ const deleteComment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "only comment owner can delete their comment");
     }
 
-    await like.deleteMany({
-        comment: commentId,
-        likedBy: req.user
-    })
+    await Like.deleteMany({
+        comment: commentId
+    });
+
+    await Comment.findByIdAndDelete(commentId);
+
     return res
         .status(200)
         .json(new ApiResponse(200, { commentId }, "Comment deleted successfully"));

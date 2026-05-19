@@ -3,9 +3,9 @@ import Sidebar from "../components/layout/Sidebar";
 
 function MainLayout({ 
     children, 
-    searchQuery, 
-    setSearchQuery, 
-    onSearch 
+    searchQuery = "", 
+    setSearchQuery = () => {}, 
+    onSearch = () => {} 
 }) {
 
     return (
@@ -21,7 +21,7 @@ function MainLayout({
 
             <Sidebar />
 
-                <main className="flex-1 bg-black text-white">
+                <main className="min-w-0 flex-1 bg-black text-white">
                     {children}
                 </main>
 

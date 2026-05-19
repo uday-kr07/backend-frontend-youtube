@@ -13,7 +13,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     const totalSubscribers = await Subscription.aggregate([
         {
             $match: {
-                channel: new mongoose.Types.ObjectId(userId)
+                channel: new mongoose.Types.ObjectId(channelId)
             }
         },
         {
@@ -29,7 +29,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     const video = await Video.aggregate([
         {
             $match: {
-                owner: new mongoose.Types.ObjectId(userId)
+                owner: new mongoose.Types.ObjectId(channelId)
             }
         },
         {
@@ -103,9 +103,6 @@ const getChannelVideos = asyncHandler(async (req, res) => {
         },
         {
             $addFields: {
-                createdAt: {
-                    $dateTpParts: { data: "$createdAt" }
-                },
                 likesCount: {
                     $size: "$likes"
                 }
@@ -119,15 +116,12 @@ const getChannelVideos = asyncHandler(async (req, res) => {
         {
             $project: {
                 _id: 1,
-                "videoFIle.url": 1,
-                "thumbnail.url": 1,
+                videoFile: 1,
+                thumbnail: 1,
                 title: 1,
                 description: 1,
-                createdAt: {
-                    year: 1,
-                    month: 1,
-                    day: 1,
-                },
+                createdAt: 1,
+                views: 1,
                 isPublished: 1,
                 likesCount: 1
             }

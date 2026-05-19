@@ -5,35 +5,48 @@ import {
     Video,
     Folder,
     Users,
+    MessageSquare,
     Info,
     Settings
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 
 const topmenuItems = [ 
     {
         title: "Home",
-        icon: <Home size={20} />
+        icon: <Home size={20} />,
+        path: "/"
     },
     {
         title: "Liked Videos",
-        icon: <ThumbsUp size={20} />
+        icon: <ThumbsUp size={20} />,
+        path: "/liked"
     },
     {
         title: "History",
-        icon: <History size={20} />
+        icon: <History size={20} />,
+        path: "/history"
     },
     {
         title: "My content",
-        icon: <Video size={20} />
+        icon: <Video size={20} />,
+        path: "/dashboard"
     },
     {
         title: "Collection",
-        icon: <Folder size={20} />
+        icon: <Folder size={20} />,
+        path: "/playlists"
     },
     {
         title: "Subscribers",
-        icon: <Users size={20} />
+        icon: <Users size={20} />,
+        path: "/subscriptions"
+    },
+    {
+        title: "Tweets",
+        icon: <MessageSquare size={20} />,
+        path: "/tweets"
     },
 ];
 
@@ -49,25 +62,28 @@ const bottomMenuItems = [
 ];
 
 function Sidebar () {
+    const navigate = useNavigate();
 
     return (
-        <div className="w-[260px] h-screen border-r border-gray-700 bg-black text-white p-5 flex flex-col justify-between">
+        <div className="sticky top-[73px] hidden h-[calc(100vh-73px)] w-[260px] shrink-0 flex-col justify-between border-r border-gray-700 bg-black p-5 text-white lg:flex">
 
             {/* TOP MENU */}
             <div className="flex flex-col gap-4 mt-5">
 
                 {topmenuItems.map((item, index) => (
 
-                    <div
+                    <button
+                        type="button"
                         key={index}
-                        className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-gray-900  rounded-lg transition-colors "
+                        onClick={() => navigate(item.path)}
+                        className="flex items-center gap-4 rounded-md px-4 py-3 text-left transition-colors hover:bg-gray-900"
                     >
                         {item.icon}
 
                         <span className="text-[16px] font-medium">
                             {item.title}
                         </span>
-                    </div>
+                    </button>
                 ))}
 
             </div>
@@ -77,16 +93,17 @@ function Sidebar () {
 
                 {bottomMenuItems.map((item, index) => (
 
-                    <div
+                    <button
+                        type="button"
                         key={index}
-                        className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-gray-900 rounded-lg transition-colors "
+                        className="flex items-center gap-4 rounded-md px-4 py-3 text-left transition-colors hover:bg-gray-900"
                     >
                         {item.icon}
 
                         <span className="text-[16px] font-medium">
                             {item.title}
                         </span>
-                    </div>
+                    </button>
 
                 ))}
 

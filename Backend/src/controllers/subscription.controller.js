@@ -112,7 +112,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
                     _id: 1,
                     username: 1,
                     fullName: 1,
-                    "avatar.url": 1,
+                                    avatar: 1,
                     subscribedToSubscriber: 1,
                     subscribersCount: 1,
                 },
@@ -134,6 +134,10 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 // controller to return channel list to which user has subscribed
 const getSubscribedChannels = asyncHandler(async (req, res) => {
     const { subscriberId } = req.params
+
+    if (!isValidObjectId(subscriberId)) {
+        throw new ApiError(400, "Invalid subscriberId");
+    }
 
     const subscribedChannels = await Subscription.aggregate([
         {
@@ -174,16 +178,16 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
                 _id: 0,
                 subscribedChannel: {
                     _id: 1,
-                    username: 1,
-                    fullName: 1,
-                    "avatar.url": 1,
-                    latestVideo: {
-                        _id: 1,
-                        "videoFile.url": 1,
-                        "thumbnail.url": 1,
-                        owner: 1,
-                        title: 1,
-                        description: 1,
+                        username: 1,
+                        fullName: 1,
+                        avatar: 1,
+                        latestVideo: {
+                            _id: 1,
+                            videoFile: 1,
+                            thumbnail: 1,
+                            owner: 1,
+                            title: 1,
+                            description: 1,
                         duration: 1,
                         createdAt: 1,
                         views: 1

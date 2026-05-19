@@ -1,10 +1,12 @@
 import mongoose, {isValidObjectId} from "mongoose"
 import {Video} from "../models/video.model.js"
 import {User} from "../models/user.model.js"
+import {Like} from "../models/like.model.js"
+import {Comment} from "../models/comment.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
-import { uploadOnCloudinary} from "../utils/cloudinary.js"
+import { uploadOnCloudinary, deleteOnCloudinary} from "../utils/cloudinary.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -70,7 +72,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
                     {
                         $project: {
                             username: 1,
-                            "avatar.url": 1
+                            avatar: 1
                         }
                     }
                 ]
@@ -104,8 +106,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required");
     }
 
-    const videoFileLocalPath = req.files?.videoFile[0].path;
-    const thumbnailLocalPath = req.files?.thumbnail[0].path;
+    const videoFileLocalPath = req.files?.videoFile?.[0]?.path;
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
 
     if (!videoFileLocalPath) {
         throw new ApiError(400, "videoFileLocalPath is required");
@@ -217,7 +219,7 @@ const getVideoById = asyncHandler(async (req, res) => {
                     {
                         $project: {
                             username: 1,
-                            "avatar.url": 1,
+                            avatar: 1,
                             subscribersCount: 1,
                             isSubscribed: 1
                         }
