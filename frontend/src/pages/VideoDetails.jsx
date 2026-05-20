@@ -57,7 +57,10 @@ function VideoDetails() {
             <div className="flex flex-col gap-6 bg-black p-5 text-white xl:flex-row">
                 <div className="min-w-0 flex-1">
                     <VideoPlayer video={video} />
-                    <VideoInfo video={video} />
+                    <VideoInfo
+                        key={video?._id}
+                        video={video}
+                    />
                     <CommentSection videoId={videoId} />
                 </div>
 

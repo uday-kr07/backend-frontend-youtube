@@ -3,6 +3,7 @@ import {
     ThumbsUp,
     History,
     Video,
+    Upload,
     Folder,
     Users,
     MessageSquare,
@@ -27,6 +28,11 @@ const topmenuItems = [
         title: "History",
         icon: <History size={20} />,
         path: "/history"
+    },
+    {
+        title: "Upload",
+        icon: <Upload size={20} />,
+        path: "/upload"
     },
     {
         title: "My content",
@@ -65,7 +71,7 @@ function Sidebar () {
     const navigate = useNavigate();
 
     return (
-        <div className="sticky top-[73px] hidden h-[calc(100vh-73px)] w-[260px] shrink-0 flex-col justify-between border-r border-gray-700 bg-black p-5 text-white lg:flex">
+        <div className="sticky top-[73px] flex h-[calc(100vh-73px)] w-[260px] shrink-0 flex-col justify-between border-r border-gray-700 bg-black p-5 text-white">
 
             {/* TOP MENU */}
             <div className="flex flex-col gap-4 mt-5">

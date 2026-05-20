@@ -1,4 +1,4 @@
-import { Search, UserCircle } from "lucide-react";
+import { Search, Upload, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import playlogo from "../../assets/PLAYLOGO.jpeg"
 import { useAuth } from "../../context/AuthContext";
@@ -56,28 +56,39 @@ function Navbar({ searchQuery = "", setSearchQuery = () => {}, onSearch = () => 
             <div className="flex items-center gap-3 md:gap-5">
 
                 {user ? (
-                    <button
-                        type="button"
-                        onClick={() => navigate("/profile")}
-                        className="flex items-center gap-3 rounded-md px-2 py-1 text-left transition-all duration-300 hover:bg-white/10"
-                    >
-                        {avatarUrl ? (
-                            <img
-                                src={avatarUrl}
-                                alt={displayName}
-                                className="h-10 w-10 rounded-full object-cover border border-purple-500"
-                            />
-                        ) : (
-                            <UserCircle
-                                size={40}
-                                className="text-purple-400"
-                            />
-                        )}
+                    <>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/upload")}
+                            className="flex h-10 items-center gap-2 rounded-md bg-purple-500 px-4 font-semibold text-black transition hover:bg-purple-400"
+                        >
+                            <Upload size={18} />
+                            <span className="hidden sm:inline">Upload</span>
+                        </button>
 
-                        <span className="hidden max-w-32 truncate font-semibold text-white md:block">
-                            {displayName}
-                        </span>
-                    </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/profile")}
+                            className="flex items-center gap-3 rounded-md px-2 py-1 text-left transition-all duration-300 hover:bg-white/10"
+                        >
+                            {avatarUrl ? (
+                                <img
+                                    src={avatarUrl}
+                                    alt={displayName}
+                                    className="h-10 w-10 rounded-full object-cover border border-purple-500"
+                                />
+                            ) : (
+                                <UserCircle
+                                    size={40}
+                                    className="text-purple-400"
+                                />
+                            )}
+
+                            <span className="hidden max-w-32 truncate font-semibold text-white md:block">
+                                {displayName}
+                            </span>
+                        </button>
+                    </>
                 ) : (
                     <>
                         <button

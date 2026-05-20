@@ -1,6 +1,6 @@
 import { Heart, Send, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createTweet, deleteTweet, getUserTweets } from "../api/tweetApi";
+import { createTweet, deleteTweet, getAllTweets } from "../api/tweetApi";
 import { toggleTweetLike } from "../api/likesApi";
 import { useAuth } from "../context/AuthContext";
 import MainLayout from "../layouts/MainLayout";
@@ -19,10 +19,8 @@ function Tweets() {
 
     useEffect(() => {
         const fetchTweets = async () => {
-            if (!user?._id) return;
-
             try {
-                const response = await getUserTweets(user._id);
+                const response = await getAllTweets();
                 setTweets(response.data || []);
             } catch (error) {
                 console.log(error);
@@ -32,7 +30,7 @@ function Tweets() {
         };
 
         fetchTweets();
-    }, [user?._id]);
+    }, []);
 
     const handleCreate = async (event) => {
         event.preventDefault();
@@ -125,6 +123,7 @@ function Tweets() {
                             const owner = tweet.ownerDetails || user;
                             const avatarUrl = getAvatarUrl(owner);
                             const ownerName = getDisplayName(owner);
+                            const isOwnTweet = user?._id && owner?._id && user._id === owner._id;
 
                             return (
                                 <article
@@ -172,13 +171,15 @@ function Tweets() {
                                                     {formatViews(tweet.likesCount)}
                                                 </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleDelete(tweet._id)}
-                                                    className="rounded-md bg-gray-900 p-2 text-gray-300 hover:bg-red-500 hover:text-white"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                                {isOwnTweet && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDelete(tweet._id)}
+                                                        className="rounded-md bg-gray-900 p-2 text-gray-300 hover:bg-red-500 hover:text-white"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

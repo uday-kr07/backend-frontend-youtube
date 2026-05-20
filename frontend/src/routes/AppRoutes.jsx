@@ -10,6 +10,7 @@ import LikedVideos from "../pages/LikedVideos";
 import Playlist from "../pages/Playlist";
 import Subscriptions from "../pages/Subscriptions";
 import Tweets from "../pages/Tweets";
+import UploadVideo from "../pages/UploadVideo";
 import WatchHistory from "../pages/WatchHistory";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -50,6 +51,15 @@ function AppRoutes() {
                     element={
                         <ProtectedRoute>
                             <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/upload"
+                    element={
+                        <ProtectedRoute>
+                            <UploadVideo />
                         </ProtectedRoute>
                     }
                 />

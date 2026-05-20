@@ -9,9 +9,9 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 // get all comments for a video
 const getVideoComments = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a video
     const {videoId} = req.params;
     const {page = 1, limit = 10} = req.query;
+    const viewerId = req.user?._id ? new mongoose.Types.ObjectId(req.user._id) : null;
 
     const video = await Video.findById(videoId);
 
@@ -49,13 +49,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
                 owner: {
                     $first: "$owner"
                 },
-                isLiked: {
-                    $cond: {
-                        if: { $in: [req.user?._id, "$likes.likedBy"] },
-                        then: true,
-                        else: false
-                    }
-                }
+                isLiked: viewerId
+                    ? { $in: [viewerId, "$likes.likedBy"] }
+                    : false
             }
         },
         {

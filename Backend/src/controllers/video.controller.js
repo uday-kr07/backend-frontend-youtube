@@ -11,25 +11,16 @@ import { uploadOnCloudinary, deleteOnCloudinary} from "../utils/cloudinary.js"
 
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
-    console.log(userId)
-    //TODO: get all videos based on query, sort, pagination
-
 
     const pipeline = [];
 
-    // for using Full Text based search u need to create a search index in mongoDB atlas
-    // you can include field mapppings in search index eg.title, description, as well
-    // Field mappings specify which fields within your documents should be indexed for text search.
-    // this helps in seraching only in title, desc providing faster search results
-    // here the name of search index is 'search-videos'
     if (query) {
         pipeline.push({
-            $search: {
-                index: "search-videos",
-                text: {
-                    query: query,
-                    path: ["title", "description"] //search only on title, desc
-                }
+            $match: {
+                $or: [
+                    { title: { $regex: query, $options: "i" } },
+                    { description: { $regex: query, $options: "i" } },
+                ],
             }
         });
     }
@@ -72,6 +63,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
                     {
                         $project: {
                             username: 1,
+                            fullName: 1,
                             avatar: 1
                         }
                     }
@@ -99,8 +91,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description} = req.body;
-    // TODO: get video, upload to cloudinary, create video
+    const { title, description, isPublished = "true"} = req.body;
 
     if ([title, description].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required");
@@ -141,7 +132,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
             public_id: thumbnail.public_id
         },
         owner: req.user?._id,
-        isPublished: false
+        isPublished: isPublished === true || isPublished === "true"
     });
 
     const videoUploaded = await Video.findById(video._id);
@@ -158,15 +149,12 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: get video by id
 
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid videoId");
     }
 
-    if (!isValidObjectId(req.user?._id)) {
-        throw new ApiError(400, "Invalid userId");
-    }
+    const viewerId = req.user?._id ? new mongoose.Types.ObjectId(req.user._id) : null;
 
     const video = await Video.aggregate([
         {
@@ -202,23 +190,15 @@ const getVideoById = asyncHandler(async (req, res) => {
                             subscribersCount: {
                                 $size: "$subscribers"
                             },
-                            isSubscribed: {
-                                $cond: {
-                                    if: {
-                                        $in: [
-                                            req.user?._id,
-                                            "$subscribers.subscriber"
-                                        ]
-                                    },
-                                    then: true,
-                                    else: false
-                                }
-                            }
+                            isSubscribed: viewerId
+                                ? { $in: [viewerId, "$subscribers.subscriber"] }
+                                : false
                         }
                     },
                     {
                         $project: {
                             username: 1,
+                            fullName: 1,
                             avatar: 1,
                             subscribersCount: 1,
                             isSubscribed: 1
@@ -235,21 +215,19 @@ const getVideoById = asyncHandler(async (req, res) => {
                 owner: {
                     $first: "$owner"
                 },
-                isLiked: {
-                    $cond: {
-                        if: {$in: [req.user?._id, "$likes.likedBy"]},
-                        then: true,
-                        else: false
-                    }
-                }
+                isLiked: viewerId
+                    ? { $in: [viewerId, "$likes.likedBy"] }
+                    : false
             }
         },
         {
             $project: {
-                "videoFile.url": 1,
+                videoFile: 1,
+                thumbnail: 1,
                 title: 1,
                 description: 1,
                 views: 1,
+                isPublished: 1,
                 createdAt: 1,
                 duration: 1,
                 comments: 1,
@@ -260,23 +238,31 @@ const getVideoById = asyncHandler(async (req, res) => {
         }
     ]);
 
-    if (!video) {
-        throw new ApiError(500, "failed to fetch video");
+    if (!video?.length) {
+        throw new ApiError(404, "Video not found");
     }
 
-    // increment views if video fetched successfully
+    const ownerId = video[0]?.owner?._id?.toString();
+
+    if (!video[0].isPublished && ownerId !== req.user?._id?.toString()) {
+        throw new ApiError(404, "Video not found");
+    }
+
     await Video.findByIdAndUpdate(videoId, {
         $inc: {
             views: 1
         }
     });
 
-    // add this video to user watch history
-    await User.findByIdAndUpdate(req.user?._id, {
-        $addToSet: {
-            watchHistory: videoId
-        }
-    });
+    video[0].views = (video[0].views || 0) + 1;
+
+    if (req.user?._id) {
+        await User.findByIdAndUpdate(req.user._id, {
+            $addToSet: {
+                watchHistory: videoId
+            }
+        });
+    }
 
     return res
         .status(200)
@@ -450,15 +436,27 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 const searchVideos = async (req, res) => {
     
-    const { query } = req.query;
+    const { query = "" } = req.query;
 
-    const videos =await Video.find({
-
-        title: {
-            $regex: query,
-            $options: "i"
-        }
-    }).populate("owner", "username avatar");
+    const videos = await Video.find({
+        isPublished: true,
+        $or: [
+            {
+                title: {
+                    $regex: query,
+                    $options: "i"
+                }
+            },
+            {
+                description: {
+                    $regex: query,
+                    $options: "i"
+                }
+            }
+        ]
+    })
+        .populate("owner", "username fullName avatar")
+        .sort({ createdAt: -1 });
 
     res.json({
         success: true,

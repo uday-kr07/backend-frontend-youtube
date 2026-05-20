@@ -1,5 +1,10 @@
 import api from "../services/axios";
 
+export const getAllTweets = async () => {
+    const response = await api.get("/tweets");
+    return response.data;
+};
+
 export const createTweet = async (content) => {
     const response = await api.post("/tweets", { content });
     return response.data;

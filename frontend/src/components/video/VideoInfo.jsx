@@ -1,5 +1,5 @@
 import { Bell, BellOff, ThumbsUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleVideoLike } from "../../api/likesApi";
 import { toggleSubscription } from "../../api/subscriptionApi";
@@ -17,20 +17,13 @@ function VideoInfo({ video }) {
     const owner = video?.owner || {};
     const ownerId = owner?._id;
     const isOwnVideo = user?._id && ownerId && user._id === ownerId;
-    const [isLiked, setIsLiked] = useState(false);
-    const [likesCount, setLikesCount] = useState(0);
-    const [isSubscribed, setIsSubscribed] = useState(false);
-    const [subscribersCount, setSubscribersCount] = useState(0);
+    const [isLiked, setIsLiked] = useState(Boolean(video?.isLiked));
+    const [likesCount, setLikesCount] = useState(video?.likesCount || 0);
+    const [isSubscribed, setIsSubscribed] = useState(Boolean(owner?.isSubscribed));
+    const [subscribersCount, setSubscribersCount] = useState(owner?.subscribersCount || 0);
     const [busyAction, setBusyAction] = useState("");
     const avatarUrl = getAvatarUrl(owner);
     const ownerName = getDisplayName(owner);
-
-    useEffect(() => {
-        setIsLiked(Boolean(video?.isLiked));
-        setLikesCount(video?.likesCount || 0);
-        setIsSubscribed(Boolean(owner?.isSubscribed));
-        setSubscribersCount(owner?.subscribersCount || 0);
-    }, [owner?.isSubscribed, owner?.subscribersCount, video?.isLiked, video?.likesCount]);
 
     const requireLogin = () => {
         if (!user) {
