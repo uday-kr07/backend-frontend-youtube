@@ -1,4 +1,4 @@
-import { Bell, BellOff, ThumbsUp } from "lucide-react";
+import { Bell, BellOff, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleVideoLike } from "../../api/likesApi";
@@ -19,6 +19,8 @@ function VideoInfo({ video }) {
     const isOwnVideo = user?._id && ownerId && user._id === ownerId;
     const [isLiked, setIsLiked] = useState(Boolean(video?.isLiked));
     const [likesCount, setLikesCount] = useState(video?.likesCount || 0);
+    const [isDisliked, setIsDisliked] = useState(Boolean(video?.isDisliked));
+    const [dislikesCount, setDislikesCount] = useState(video?.dislikesCount || 0);
     const [isSubscribed, setIsSubscribed] = useState(Boolean(owner?.isSubscribed));
     const [subscribersCount, setSubscribersCount] = useState(owner?.subscribersCount || 0);
     const [busyAction, setBusyAction] = useState("");
@@ -43,13 +45,57 @@ function VideoInfo({ video }) {
             const nextLiked = Boolean(response.data?.isLiked);
 
             setIsLiked(nextLiked);
-            setLikesCount((count) => Math.max(0, count + (nextLiked ? 1 : -1)));
+            setLikesCount((count) => Math.max(0, count + (nextLiked ? 1 : -1))
+        );
+
+        if (nextLiked && isDisliked) {
+            setIsDisliked(false);
+
+            setDislikesCount((count) => 
+            Math.max(0, count - 1));
+        };
+
         } catch (error) {
             console.log(error);
         } finally {
             setBusyAction("");
         }
     };
+
+
+    const handleDislike = async () => {
+        if (!requireLogin() || !video?._id || busyAction) return;
+
+        try {
+            setBusyAction("dislike");
+
+            // TEMPORARY FRONTEND LOGIC
+            // Replace with API later
+
+            const nextDisliked = !isDisliked;
+
+            setIsDisliked(nextDisliked);
+
+            setDislikesCount((count) =>
+                Math.max(0, count + (nextDisliked ? 1 : -1))
+            );
+
+            // REMOVE LIKE IF DISLIKED
+            if (nextDisliked && isLiked) {
+                setIsLiked(false);
+
+                setLikesCount((count) =>
+                    Math.max(0, count - 1)
+                );
+            }
+
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setBusyAction("");
+        }
+    };
+
 
     const handleSubscribe = async () => {
         if (!requireLogin() || !ownerId || isOwnVideo || busyAction) return;
@@ -69,18 +115,24 @@ function VideoInfo({ video }) {
     };
 
     return (
-        <div className="mt-5 rounded-md border border-gray-800 p-5">
-            <h1 className="m-0 text-2xl font-semibold text-white">
+        <div className="relative rounded-md border border-gray-800 p-5 pb-5 pt-0">
+            <h1 className="absolute -top-8 left-5 text-2xl font-semibold text-white">
                 {video?.title}
             </h1>
 
-            <div className="mt-2 text-sm text-gray-400">
+            {/* <div className="mt-20 text-sm text-gray-400">
                 {formatViews(video?.views)} views
                 {video?.createdAt ? ` - ${formatRelativeTime(video.createdAt)}` : ""}
+            </div> */}
+
+            <div className="mt-20 text-sm text-gray-400">
+                {formatViews(video?.views)} views
             </div>
 
-            <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex flex-wrap items-center gap-4">
+            <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div 
+                onClick={() => navigate(`/profile/${ownerId}`)}
+                className="flex flex-wrap items-center gap-4">
                     {avatarUrl ? (
                         <img
                             src={avatarUrl}
@@ -133,7 +185,22 @@ function VideoInfo({ video }) {
                         <ThumbsUp size={18} />
                         {formatViews(likesCount)}
                     </button>
+                    <button
+                        type="button"
+                        onClick={handleDislike}
+                        disabled={busyAction === "dislike"}
+                        className={`flex h-10 items-center gap-2 rounded-md px-4 transition ${
+                            isDisliked
+                                ? "bg-red-500 text-white hover:bg-red-400"
+                                : "bg-gray-900 text-white hover:bg-gray-800"
+                        } disabled:opacity-60`}
+                    >
+                        <ThumbsDown size={18} />
+
+                        {formatViews(dislikesCount)}
+                    </button>
                 </div>
+                
             </div>
 
             <div className="mt-5 border-t border-gray-800 pt-4">
