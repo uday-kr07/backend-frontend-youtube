@@ -128,6 +128,7 @@ function Tweets() {
                             return (
                                 <article
                                     key={tweet._id}
+                                    onClick={() => owner?.username && navigate(`/channel/${owner.username}`)}
                                     className="p-5"
                                 >
                                     <div className="flex items-start gap-3">

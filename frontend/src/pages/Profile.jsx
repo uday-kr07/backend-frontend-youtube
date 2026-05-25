@@ -2,22 +2,82 @@ import { LogOut, Mail, User, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 
 function Profile() {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
 
+    const [showLogoutModel, setShowLogoutModel] = useState(false);
     const avatarUrl = typeof user?.avatar === "string" ? user.avatar : user?.avatar?.url;
     const coverUrl = typeof user?.coverImage === "string" ? user.coverImage : user?.coverImage?.url;
     const displayName = user?.fullName || user?.username || "User";
-
     const handleLogout = () => {
         logout();
         navigate("/login");
     };
 
     return (
+
+        <>
+
+    {/* Logout Model */}
+
+    {showLogoutModel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+
+                    <div className="w-[90%] max-w-md rounded-2xl border border-gray-800 bg-[#111111] p-6 shadow-2xl">
+
+                        <h2 className="text-2xl font-bold text-white">
+                            Logout?
+                        </h2>
+
+                        <p className="mt-3 text-gray-400">
+                            Are you sure you want to logout?
+                        </p>
+
+                        <div className="mt-6 flex justify-end gap-4">
+
+                            <button
+                                onClick={() => setShowLogoutModel(false)}
+                                className="
+                                    rounded-lg
+                                    border
+                                    border-gray-700
+                                    px-5
+                                    py-2
+                                    text-white
+                                    transition
+                                    hover:border-gray-500
+                                "
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleLogout}
+                                className="
+                                    rounded-lg
+                                    bg-red-600
+                                    px-5
+                                    py-2
+                                    font-semibold
+                                    text-white
+                                    transition
+                                    hover:bg-red-500
+                                "
+                            >
+                                Logout
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+    )}
+
         <MainLayout
             searchQuery=""
             setSearchQuery={() => {}}
@@ -59,13 +119,29 @@ function Profile() {
                         </div>
 
                         <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="flex h-11 items-center justify-center gap-2 rounded-md border border-gray-700 px-4 font-semibold text-white transition hover:border-purple-500 hover:text-purple-300"
-                        >
-                            <LogOut size={18} />
-                            Logout
-                        </button>
+                                type="button"
+                                onClick={() => setShowLogoutModel(true)}
+                                className="
+                                    flex
+                                    h-11
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                    rounded-md
+                                    border
+                                    border-gray-700
+                                    px-4
+                                    font-semibold
+                                    text-white
+                                    transition
+                                    hover:border-purple-500
+                                    hover:text-purple-300
+                                "
+                            >
+
+                                <LogOut size={18} />
+                                Logout
+                            </button>
                     </div>
 
                     <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -102,6 +178,8 @@ function Profile() {
                 </div>
             </section>
         </MainLayout>
+
+        </>
     );
 }
 

@@ -130,23 +130,24 @@ function VideoInfo({ video }) {
             </div>
 
             <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                <div 
-                onClick={() => navigate(`/profile/${ownerId}`)}
-                className="flex flex-wrap items-center gap-4">
+                <div
+                    onClick={() => owner?.username && navigate(`/channel/${owner.username}`)}
+                    className="flex flex-wrap items-center gap-4 cursor-pointer"
+                >
                     {avatarUrl ? (
                         <img
                             src={avatarUrl}
                             alt={ownerName}
-                            className="h-12 w-12 rounded-full object-cover"
+                            className="h-12 w-12 rounded-full object-cover hover:opacity-80 transition-opacity"
                         />
                     ) : (
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 font-semibold text-purple-300">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 font-semibold text-purple-300 hover:opacity-80 transition-opacity">
                             {ownerName.charAt(0).toUpperCase()}
                         </div>
                     )}
 
                     <div>
-                        <h3 className="font-semibold">
+                        <h3 className="font-semibold hover:text-purple-300 transition-colors">
                             {ownerName}
                         </h3>
                         <p className="text-sm text-gray-400">
@@ -157,7 +158,7 @@ function VideoInfo({ video }) {
                     {!isOwnVideo && (
                         <button
                             type="button"
-                            onClick={handleSubscribe}
+                            onClick={(e) => { e.stopPropagation(); handleSubscribe(); }}
                             disabled={busyAction === "subscribe"}
                             className={`flex h-10 items-center gap-2 rounded-md px-4 font-semibold transition ${
                                 isSubscribed

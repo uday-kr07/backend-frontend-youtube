@@ -80,15 +80,11 @@ function Login() {
                 {/* TITLE */}
 
                 <h1 className="text-3xl font-bold text-center">
-
                     Login
-
                 </h1>
 
                 <p className="text-gray-400 text-center mt-2">
-
                     Welcome back to Play
-
                 </p>
 
 
@@ -97,9 +93,7 @@ function Login() {
                 {error && (
 
                     <div className="mt-5 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm">
-
                         {error}
-
                     </div>
 
                 )}
@@ -117,7 +111,6 @@ function Login() {
                     <div>
 
                         <label className="text-sm text-gray-400">
-
                             Email
 
                         </label>

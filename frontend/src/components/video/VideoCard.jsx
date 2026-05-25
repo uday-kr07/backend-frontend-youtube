@@ -21,6 +21,13 @@ function VideoCard({ video }) {
         }
     };
 
+    const openChannel = (e) => {
+        e.stopPropagation();
+        if (owner?.username) {
+            navigate(`/channel/${owner.username}`);
+        }
+    };
+
     return (
         <button
             type="button"
@@ -46,10 +53,14 @@ function VideoCard({ video }) {
                     <img
                         src={avatarUrl}
                         alt={channelName}
-                        className="h-10 w-10 shrink-0 rounded-full object-cover"
+                        onClick={openChannel}
+                        className="h-10 w-10 shrink-0 rounded-full object-cover hover:opacity-80 transition-opacity"
                     />
                 ) : (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-800 text-sm font-semibold text-purple-300">
+                    <div
+                        onClick={openChannel}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-800 text-sm font-semibold text-purple-300 hover:opacity-80 transition-opacity"
+                    >
                         {channelName.charAt(0).toUpperCase()}
                     </div>
                 )}
@@ -58,13 +69,14 @@ function VideoCard({ video }) {
                     <h3 className="line-clamp-2 font-semibold leading-6 group-hover:text-purple-300">
                         {video?.title}
                     </h3>
-
                     <p className="mt-1 text-sm text-gray-400">
                         {formatViews(video?.views)} views
                         {video?.createdAt ? ` - ${formatRelativeTime(video.createdAt)}` : ""}
                     </p>
-
-                    <p className="mt-1 truncate text-sm text-gray-500">
+                    <p
+                        onClick={openChannel}
+                        className="mt-1 truncate text-sm text-gray-500 hover:text-purple-400 transition-colors"
+                    >
                         {channelName}
                     </p>
                 </div>
