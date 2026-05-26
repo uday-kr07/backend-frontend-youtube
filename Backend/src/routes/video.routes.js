@@ -43,5 +43,4 @@ router
 router.route("/toggle/publish/:videoId").patch(verifyJWT, togglePublishStatus);
 
 
-
 export default router

@@ -5,7 +5,6 @@ import { toggleVideoLike } from "../../api/likesApi";
 import { toggleSubscription } from "../../api/subscriptionApi";
 import { useAuth } from "../../context/AuthContext";
 import {
-    formatRelativeTime,
     getAvatarUrl,
     getDisplayName,
 } from "../../utils/formatData";

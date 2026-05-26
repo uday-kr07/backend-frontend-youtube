@@ -1,5 +1,6 @@
 import { Heart, Send, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createTweet, deleteTweet, getAllTweets } from "../api/tweetApi";
 import { toggleTweetLike } from "../api/likesApi";
 import { useAuth } from "../context/AuthContext";
@@ -12,6 +13,7 @@ import {
 import { formatViews } from "../utils/formatViews";
 
 function Tweets() {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [tweets, setTweets] = useState([]);
     const [content, setContent] = useState("");
@@ -161,7 +163,10 @@ function Tweets() {
                                             <div className="mt-4 flex items-center gap-3">
                                                 <button
                                                     type="button"
-                                                    onClick={() => handleLike(tweet._id)}
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        handleLike(tweet._id);
+                                                    }}
                                                     className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
                                                         tweet.isLiked
                                                             ? "bg-purple-500 text-black"
@@ -175,7 +180,10 @@ function Tweets() {
                                                 {isOwnTweet && (
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleDelete(tweet._id)}
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            handleDelete(tweet._id);
+                                                        }}
                                                         className="rounded-md bg-gray-900 p-2 text-gray-300 hover:bg-red-500 hover:text-white"
                                                     >
                                                         <Trash2 size={16} />

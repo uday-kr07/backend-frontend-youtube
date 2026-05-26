@@ -1,10 +1,10 @@
-import { Bell, BellOff, UserRound, Video, MessageSquare, Heart } from "lucide-react";
+import { Bell, BellOff, UserRound, Video, MessageSquare, Heart, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getChannelProfile } from "../api/authApi";
 import { toggleSubscription } from "../api/subscriptionApi";
 import { getAllVideos } from "../api/videoApi";
-import { getUserTweets } from "../api/tweetApi";
+import { deleteTweet, getUserTweets } from "../api/tweetApi";
 import { toggleTweetLike } from "../api/likesApi";
 import VideoGrid from "../components/video/VideoGrid";
 import { useAuth } from "../context/AuthContext";
@@ -59,7 +59,7 @@ function Channel() {
             };
             fetchTweets();
         }
-    }, [activeTab, channel?._id]);
+    }, [activeTab, channel?._id, tweets.length]);
 
     const handleSubscribe = async () => {
         if (!user) {
@@ -105,6 +105,15 @@ function Channel() {
                         : tweet
                 )
             );
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleTweetDelete = async (tweetId) => {
+        try {
+            await deleteTweet(tweetId);
+            setTweets((items) => items.filter((tweet) => tweet._id !== tweetId));
         } catch (error) {
             console.log(error);
         }
@@ -284,6 +293,16 @@ function Channel() {
                                                                     <Heart size={16} />
                                                                     {formatViews(tweet.likesCount)}
                                                                 </button>
+
+                                                                {isOwnChannel && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleTweetDelete(tweet._id)}
+                                                                        className="rounded-md bg-gray-900 p-2 text-gray-300 hover:bg-red-500 hover:text-white"
+                                                                    >
+                                                                        <Trash2 size={16} />
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>

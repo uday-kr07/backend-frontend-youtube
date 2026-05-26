@@ -3,6 +3,7 @@ import {Video} from "../models/video.model.js"
 import {User} from "../models/user.model.js"
 import {Like} from "../models/like.model.js"
 import {Comment} from "../models/comment.model.js"
+import {Playlist} from "../models/playlist.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -271,8 +272,8 @@ const getVideoById = asyncHandler(async (req, res) => {
         );
 });
 
-// update video details like title, description, thumbnail
 
+// update video details like title, description, thumbnail
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     const { title, description } = req.body;
@@ -343,9 +344,10 @@ const updateVideo = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, updatedVideo, "Video updated successfully"));
 });
 
+
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: delete video
+    
 
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid videoId");
@@ -359,35 +361,59 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
     if (video?.owner.toString() !== req.user?._id.toString()) {
         throw new ApiError(
-            400,
+            403,
             "You can't delete this video as you are not the owner"
         );
     }
 
+    const commentIds = await Comment.find({ video: videoId }).distinct("_id");
     const videoDeleted = await Video.findByIdAndDelete(video?._id);
 
     if (!videoDeleted) {
-        throw new ApiError(400, "Failed to delete the video please try again");
-    }
+    throw new ApiError(
+        500,
+        "Failed to delete the video"
+    );
+}
 
     await deleteOnCloudinary(video.thumbnail.public_id); // video model has thumbnail public_id stored in it->check videoModel
     await deleteOnCloudinary(video.videoFile.public_id, "video"); // specify video while deleting video
 
-    // delete video likes
     await Like.deleteMany({
-        video: videoId
-    })
+        $or: [
+            { video: videoId },
+            { comment: { $in: commentIds } },
+        ],
+    });
 
-     // delete video comments
     await Comment.deleteMany({
         video: videoId,
-    })
+    });
+
+    await Playlist.updateMany(
+        { videos: videoId },
+        {
+            $pull: {
+                videos: videoId,
+            },
+        }
+    );
+
+    await User.updateMany(
+        { watchHistory: videoId },
+        {
+            $pull: {
+                watchHistory: videoId,
+            },
+        }
+    );
     
     return res
         .status(200)
         .json(new ApiResponse(200, {}, "Video deleted successfully"));
 
-})
+});
+
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
@@ -432,7 +458,8 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
                 "Video publish toggled successfully"
             )
         );
-})
+});
+
 
 const searchVideos = async (req, res) => {
     
@@ -464,6 +491,7 @@ const searchVideos = async (req, res) => {
     });
 };
 
+
 export {
     getAllVideos,
     publishAVideo,
@@ -471,5 +499,5 @@ export {
     updateVideo,
     deleteVideo,
     togglePublishStatus,
-    searchVideos
+    searchVideos,
 }

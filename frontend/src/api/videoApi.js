@@ -5,10 +5,12 @@ export const getAllVideos = async (params = {}) => {
     return response.data;
 };
 
+
 export const getVideosById = async (videoId) => {
     const response = await api.get(`/videos/${videoId}`);
     return response.data;
 };
+
 
 export const uploadVideoBy = async (formData) => {
     const response = await api.post(
@@ -23,6 +25,7 @@ export const uploadVideoBy = async (formData) => {
     return response.data;
 };
 
+
 export const searchVideos = async (query) => {
 
     const response = await api.get(
@@ -31,9 +34,15 @@ export const searchVideos = async (query) => {
     );
 
     return response.data;
-}
+};
+
 
 export const toggleVideoPublish = async (videoId) => {
     const response = await api.patch(`/videos/toggle/publish/${videoId}`);
+    return response.data;
+};
+
+export const deleteVideo = async (videoId) => {
+    const response = await api.delete(`/videos/${videoId}`);
     return response.data;
 };

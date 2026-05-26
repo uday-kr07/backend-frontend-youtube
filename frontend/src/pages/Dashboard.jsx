@@ -1,10 +1,10 @@
-import { Eye, Heart, Power, Users, Video as VideoIcon } from "lucide-react";
+import { AlertTriangle, Eye, Heart, Power, Trash2, Users, Video as VideoIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
     getChannelStats,
     getChannelVideos,
 } from "../api/dashboardApi";
-import { toggleVideoPublish } from "../api/videoApi";
+import { toggleVideoPublish, deleteVideo  } from "../api/videoApi";
 import MainLayout from "../layouts/MainLayout";
 import { getMediaUrl } from "../utils/formatData";
 import { formatViews } from "../utils/formatViews";
@@ -13,6 +13,8 @@ function Dashboard() {
     const [stats, setStats] = useState(null);
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [videoToDelete, setVideoToDelete] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         const fetchDashboard = async () => {
@@ -32,6 +34,7 @@ function Dashboard() {
         fetchDashboard();
     }, []);
 
+
     const handlePublishToggle = async (videoId) => {
         try {
             const response = await toggleVideoPublish(videoId);
@@ -47,6 +50,36 @@ function Dashboard() {
             console.log(error);
         }
     };
+
+
+    const handleDeleteVideo = async () => {
+        if (!videoToDelete?._id || deleting) return;
+        
+        try {
+            setDeleting(true);
+            await deleteVideo(videoToDelete._id);
+
+            setVideos((items) => 
+                items.filter((video) => video._id !== videoToDelete._id)
+            );
+
+            setStats((current) => current
+                ? {
+                    ...current,
+                    totalVideos: Math.max(0, (current.totalVideos || 0) - 1),
+                    totalViews: Math.max(0, (current.totalViews || 0) - (videoToDelete.views || 0)),
+                    totalLikes: Math.max(0, (current.totalLikes || 0) - (videoToDelete.likesCount || 0)),
+                }
+                : current
+            );
+            setVideoToDelete(null);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
 
     const statCards = [
         {
@@ -135,25 +168,92 @@ function Dashboard() {
                                                     {formatViews(video.views)} views - {formatViews(video.likesCount)} likes
                                                 </p>
                                             </div>
-
+                                            
+                                            
+                                             <div className="flex items-center gap-3">
                                             <button
                                                 type="button"
                                                 onClick={() => handlePublishToggle(video._id)}
                                                 className={`flex h-10 items-center justify-center gap-2 rounded-md px-4 font-semibold transition ${
                                                     video.isPublished
-                                                        ? "bg-green-500 text-black hover:bg-green-400"
+                                                        ? "bg-green-600 text-black hover:bg-green-400"
                                                         : "bg-gray-800 text-white hover:bg-gray-700"
                                                 }`}
                                             >
                                                 <Power size={18} />
                                                 {video.isPublished ? "Published" : "Draft"}
                                             </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setVideoToDelete(video)}
+                                                className="flex h-10 items-center justify-center gap-2 rounded-md bg-red-800 px-4 font-semibold text-white transition hover:bg-red-500"
+                                            >
+                                                <Trash2 size={18} />
+                                                Delete
+                                            </button>
+
+                                             </div>
+                                            
+                                            
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
                     </>
+                )}
+
+                {videoToDelete && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+                        <div className="w-full max-w-md rounded-md border border-red-500/40 bg-[#0f0f0f] p-5 shadow-2xl">
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500/15 text-red-400">
+                                        <AlertTriangle size={22} />
+                                    </div>
+                                    <div>
+                                        <h2 className="m-0 text-lg font-semibold text-white">
+                                            Are you want to delete this video?
+                                        </h2>
+                                        <p className="mt-1 line-clamp-1 text-sm text-gray-500">
+                                            {videoToDelete.title}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setVideoToDelete(null)}
+                                    className="rounded-md p-2 text-gray-400 hover:bg-gray-900 hover:text-white"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <p className="mt-5 text-sm leading-6 text-gray-400">
+                                ⚠️ Warning: This video will be permanently deleted.
+                            </p>
+
+                            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => setVideoToDelete(null)}
+                                    className="h-11 rounded-md border border-gray-700 px-4 font-semibold text-white hover:border-gray-500"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteVideo}
+                                    disabled={deleting}
+                                    className="h-11 rounded-md bg-red-600 px-4 font-semibold text-white transition hover:bg-red-500 disabled:opacity-60"
+                                >
+                                    {deleting ? "Deleting..." : "I'm sure to delete this video"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </section>
         </MainLayout>

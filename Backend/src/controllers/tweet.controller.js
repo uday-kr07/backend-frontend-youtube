@@ -1,6 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose"
 import {Tweet} from "../models/tweet.model.js"
-import {User} from "../models/user.model.js"
+import {Like} from "../models/like.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -158,10 +158,11 @@ const deleteTweet = asyncHandler(async (req, res) => {
     }
 
     if (tweet?.owner.toString() !== req.user?._id.toString()) {
-        throw new ApiError(400, "only owner can delete thier tweet");
+        throw new ApiError(403, "Only the owner can delete this tweet");
     }
 
     await Tweet.findByIdAndDelete(tweetId);
+    await Like.deleteMany({ tweet: tweetId });
 
     return res
         .status(200)
