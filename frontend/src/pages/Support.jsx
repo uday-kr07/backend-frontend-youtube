@@ -172,64 +172,20 @@ function Support() {
 
                 </div>
 
-                {/* SYSTEM STATUS */}
+            </section>
 
-                <div className="mt-12 rounded-2xl border border-gray-800 bg-[#111111] p-6">
-
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-semibold">
-                                System Status
-                            </h2>
-
-                            <p className="mt-2 text-gray-400">
-                                Current platform services and API status.
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-4 py-2 text-green-400">
-                            <span className="h-2 w-2 rounded-full bg-green-400" />
-                            All Systems Operational
-                        </div>
-                    </div>
-
-                    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-
-                        {[
-                            "Video Uploads",
-                            "Authentication",
-                            "Database",
-                            "Streaming API"
-                        ].map((service, index) => (
-                            <div
-                                key={index}
-                                className="
-                                    rounded-xl
-                                    border
-                                    border-gray-800
-                                    bg-black
-                                    p-4
-                                "
-                            >
-                                <div className="flex items-center justify-between">
-
-                                    <p className="font-medium">
-                                        {service}
-                                    </p>
-
-                                    <span className="text-green-400">
-                                        Online
-                                    </span>
-
-                                </div>
-                            </div>
-                        ))}
-
-                    </div>
+            <div className="mt-20 border-t border-gray-800 text-center bg-black py-16 px-4 flex flex-col items-center justify-center gap-8 rounded-md bg-gradient-to-t from-purple-500/20 to-transparent text-purple-300 p-4">
+                    <h2 className="w-full text-center text-6xl sm:text-8xl md:text-[10rem] lg:text-[14rem] font-black tracking-tighter leading-[0.9] text-white">
+                        Thank you for visiting PLAY.💕
+                    </h2>
+    
+                    <p className="text-sm sm:text-base md:text-lg text-slate-400 font-medium max-w-2xl leading-relaxed">
+                        This platform was designed and developed by Uday with passion and creativity. 
+                        Your support and time mean a lot. Hope you enjoy the experience and continue supporting PLAY ❤️
+                    </p>
 
                 </div>
 
-            </section>
         </MainLayout>
     );
 }
