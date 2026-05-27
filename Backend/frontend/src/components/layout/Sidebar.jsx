@@ -30,7 +30,7 @@ const topmenuItems = [
 ];
 
 const bottomMenuItems = [
-    { title: "Support",        icon: <Info size={20} />,           path: "/support"},
+    { title: "Support",        icon: <Info size={20} />},
     { title: "Settings",       icon: <Settings size={20} />,       path: "/settings" }
 ];
 
@@ -87,7 +87,6 @@ function Sidebar () {
                     <button
                         type="button"
                         key={index}
-                        onClick={() => item.path && navigate(item.path)}
                         title={!open ? item.title : undefined}
                         className="flex items-center gap-4 rounded-md px-4 py-3 text-left transition-colors hover:bg-gray-900 whitespace-nowrap"
                     >

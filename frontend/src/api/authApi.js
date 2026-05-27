@@ -32,6 +32,40 @@ export const logoutUser = async () => {
     return response.data;
 };
 
+export const updateAccountDetails = async (payload) => {
+    const response = await api.patch("/users/update-account", payload);
+    return response.data;
+};
+
+export const updateAvatar = async (file) => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    const response = await api.patch("/users/avatar", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+};
+
+export const updateCoverImage = async (file) => {
+    const formData = new FormData();
+    formData.append("coverImage", file);
+
+    const response = await api.patch("/users/coverImage", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+};
+
+export const deleteAccount = async () => {
+    const response = await api.delete("/users/delete-account");
+    return response.data;
+};
+
 export const getCurrentUser = async () => {
     const response = await api.get("/users/current-user");
     return response.data;

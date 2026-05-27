@@ -2,9 +2,15 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
+import { Video } from "../models/video.model.js";
+import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
+import { Tweet } from "../models/tweet.model.js";
+import { Playlist } from "../models/playlist.model.js";
+import { Subscription } from "../models/subscription.model.js";
 
 
 
@@ -297,21 +303,107 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All field is required to update")
     }
 
+    const fieldsToUpdate = {};
+
+    if (fullName?.trim()) {
+        fieldsToUpdate.fullName = fullName.trim();
+    }
+
+    if (email?.trim()) {
+        fieldsToUpdate.email = email.trim().toLowerCase();
+    }
+
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            $set: {
-                fullName,
-                email: email
-            }
+            $set: fieldsToUpdate
         },
         {new: true}
 
-    ).select("-password")
+    ).select("-password -refreshToken")
 
     return res.status(200)
     .json(new ApiResponse(200, user, "User details updated successfully"))
 })
+
+const deleteAccount = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+
+    if (!userId) {
+        throw new ApiError(401, "Unauthorized request");
+    }
+
+    const ownedVideos = await Video.find({ owner: userId }).select("videoFile thumbnail");
+    const videoIds = ownedVideos.map((video) => video._id);
+    const tweetIds = await Tweet.find({ owner: userId }).distinct("_id");
+    const commentIds = await Comment.find({
+        $or: [
+            { owner: userId },
+            { video: { $in: videoIds } },
+        ],
+    }).distinct("_id");
+
+    await Promise.all(
+        ownedVideos.flatMap((video) => [
+            deleteOnCloudinary(video.thumbnail?.public_id),
+            deleteOnCloudinary(video.videoFile?.public_id, "video"),
+        ])
+    );
+
+    await Like.deleteMany({
+        $or: [
+            { likedBy: userId },
+            { video: { $in: videoIds } },
+            { comment: { $in: commentIds } },
+            { tweet: { $in: tweetIds } },
+        ],
+    });
+
+    await Comment.deleteMany({
+        $or: [
+            { owner: userId },
+            { video: { $in: videoIds } },
+        ],
+    });
+
+    await Tweet.deleteMany({ owner: userId });
+    await Video.deleteMany({ owner: userId });
+    await Playlist.deleteMany({ owner: userId });
+    await Playlist.updateMany(
+        { videos: { $in: videoIds } },
+        {
+            $pull: {
+                videos: { $in: videoIds },
+            },
+        }
+    );
+    await Subscription.deleteMany({
+        $or: [
+            { subscriber: userId },
+            { channel: userId },
+        ],
+    });
+    await User.updateMany(
+        { watchHistory: { $in: videoIds } },
+        {
+            $pull: {
+                watchHistory: { $in: videoIds },
+            },
+        }
+    );
+    await User.findByIdAndDelete(userId);
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "Account deleted successfully"));
+});
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req.file?.path
@@ -511,5 +603,6 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    deleteAccount
 }

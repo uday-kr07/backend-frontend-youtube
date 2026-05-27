@@ -12,6 +12,8 @@ import Subscriptions from "../pages/Subscriptions";
 import Tweets from "../pages/Tweets";
 import UploadVideo from "../pages/UploadVideo";
 import WatchHistory from "../pages/WatchHistory";
+import Support from "../pages/Support";
+import Settings from "../pages/Settings";
 import ProtectedRoute from "./ProtectedRoute";
 
 
@@ -51,6 +53,24 @@ function AppRoutes() {
                     element={
                         <ProtectedRoute>
                             <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/settings"
+                    element={
+                        <ProtectedRoute>
+                            <Settings />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/support"
+                    element={
+                        <ProtectedRoute>
+                            <Support />
                         </ProtectedRoute>
                     }
                 />
@@ -122,8 +142,6 @@ function AppRoutes() {
                         </ProtectedRoute>
                     }
                 />
-
-                
 
             </Routes>
 
