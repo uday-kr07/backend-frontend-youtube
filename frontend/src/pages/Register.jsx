@@ -59,11 +59,11 @@ function Register() {
 
 
             const data = await registerUser(submitData);
-                console.log(data);
+            console.log(data);
 
-            login(data.data);
+            login(data.data.user, data.data.accessToken);
 
-            navigate("/profile");
+            navigate(`/channel/${data.data.user.username}`);
 
         } catch (error) {
 

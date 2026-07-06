@@ -136,11 +136,7 @@ function AppRoutes() {
 
                 <Route
                     path="/channel/:username"
-                    element={
-                        <ProtectedRoute>
-                            <Channel />
-                        </ProtectedRoute>
-                    }
+                    element={<Channel />}
                 />
 
             </Routes>

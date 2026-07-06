@@ -14,7 +14,7 @@ import {
     deleteAccount 
     } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { optionalVerifyJWT, verifyJWT } from "../middlewares/auth.middleware.js";
 import jwt from "jsonwebtoken";
 
 
@@ -45,7 +45,7 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails)
 router.route("/delete-account").delete(verifyJWT, deleteAccount)
 router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar)
 router.route("/coverImage").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage)// no patch in chaiorcode but i added!!
-router.route("/c/:username").get(verifyJWT, getUserChannelProfile)
+router.route("/c/:username").get(optionalVerifyJWT, getUserChannelProfile)
 router.route("/history").get(verifyJWT, getWatchHistory)
 
 

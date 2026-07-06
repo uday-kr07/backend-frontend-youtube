@@ -111,8 +111,31 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new ApiError(500, "Something went wrong while creating user")
     }
 
-    return res.status(201).json(
-        new ApiResponse(200, createdUser, "User created successfully")
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(createdUser._id)
+
+    const loggedInUser = await User.findById(createdUser._id).select(
+        "-password -refreshToken"
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(201)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                user: loggedInUser,
+                accessToken,
+                refreshToken
+            },
+            "User created successfully"
+        )
     )
 
 } )
@@ -467,6 +490,9 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
     const {username} = req.params
+    const viewerId = req.user?._id
+        ? new mongoose.Types.ObjectId(req.user._id)
+        : null
 
     if (!username?.trim()) {
         throw new ApiError(400, "Username is required")
@@ -504,7 +530,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 },
                 isSubscribed: {
                     $cond: {
-                        if: { $in: [req.user?._id, "$subscribers.subscriber"]},
+                        if: viewerId
+                            ? { $in: [viewerId, "$subscribers.subscriber"]}
+                            : false,
                         then: true,
                         else: false
                     }

@@ -68,7 +68,7 @@ function Navbar({ searchQuery = "", setSearchQuery = () => {}, onSearch = () => 
 
                         <button
                             type="button"
-                            onClick={() => navigate("/profile")}
+                            onClick={() => navigate(user?.username ? `/channel/${user.username}` : "/profile")}
                             className="flex items-center gap-3 rounded-md px-2 py-1 text-left transition-all duration-300 hover:bg-white/10"
                         >
                             {avatarUrl ? (

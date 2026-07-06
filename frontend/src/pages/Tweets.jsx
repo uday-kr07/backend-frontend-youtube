@@ -14,9 +14,11 @@ import { formatViews } from "../utils/formatViews";
 
 function Tweets() {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { accessToken, user } = useAuth();
     const [tweets, setTweets] = useState([]);
     const [content, setContent] = useState("");
+    const [error, setError] = useState("");
+    const [creating, setCreating] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,7 +41,15 @@ function Tweets() {
 
         if (!content.trim()) return;
 
+        if (!accessToken) {
+            setError("Please log in again before posting a tweet.");
+            navigate("/login");
+            return;
+        }
+
         try {
+            setCreating(true);
+            setError("");
             const response = await createTweet(content.trim());
             const tweet = {
                 ...response.data?.tweet,
@@ -53,6 +63,18 @@ function Tweets() {
             setContent("");
         } catch (error) {
             console.log(error);
+            if (error?.response?.status === 401) {
+                setError("Your login expired. Please log in again before posting.");
+                navigate("/login");
+                return;
+            }
+
+            setError(
+                error?.response?.data?.message ||
+                "Tweet was not posted. Check your backend URL and Render CORS_ORIGIN."
+            );
+        } finally {
+            setCreating(false);
         }
     };
 
@@ -106,12 +128,18 @@ function Tweets() {
                     />
                     <button
                         type="submit"
-                        disabled={!content.trim()}
+                        disabled={!content.trim() || creating || !accessToken}
                         className="flex h-11 items-center justify-center rounded-md bg-purple-500 px-4 text-black hover:bg-purple-400 disabled:opacity-50"
                     >
                         <Send size={18} />
                     </button>
                 </form>
+
+                {error && (
+                    <p className="mt-3 max-w-3xl rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                        {error}
+                    </p>
+                )}
 
                 {loading ? (
                     <p className="mt-8 text-gray-500">Loading tweets...</p>
